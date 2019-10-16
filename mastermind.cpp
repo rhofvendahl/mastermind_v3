@@ -13,7 +13,7 @@ Purpose : plays a custom game of Mastermind.
 #include <climits>
 using namespace std;
 
-#include "mastermind_records.cpp"
+#include "mastermind_records.h"
 
 const int MIN_LENGTH = 2;
 const int MAX_LENGTH = 36;
@@ -184,7 +184,7 @@ void play(vector<Record>& records) {
         if (rounds > 1)
         s = "s";
         cout << "\nCongratulations, you broke the code in " << rounds << " round"
-        << s << "!\nPlease enter your name for the records:";
+        << s << "!\nPlease enter your name for the records: ";
         string name;
         cin >> ws;
         getline(cin, name);
