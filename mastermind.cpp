@@ -1,29 +1,12 @@
-/**
-cs-11 Sampler Project
-mastermind.cpp
-Purpose : plays a custom game of Mastermind.
-
-@author Russell Hofvendahl
-@version 2.0 12/8/15
-*/
-
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
 #include <climits>
 using namespace std;
 
-#include "mastermind_records.h"
+#include "mastermind.h"
 
-const int MIN_LENGTH = 2;
-const int MAX_LENGTH = 36;
-
-/**
-Reads and returns length of code with error protection.
-
-@return code length for ensuing game.
-*/
-int codeLength() {
+int Mastermind::codeLength() {
     int length;
     do {
         cout << "Enter desired code length (2-36): ";
@@ -40,12 +23,7 @@ int codeLength() {
     return length;
 }
 
-/**
-Reads and returns number of possible characters with error protection.
-
-@return number of possible characters.
-*/
-int posChars() {
+int Mastermind::posChars() {
     int chars;
     do {
         cout << "Enter desired number of possible characters (2-36): ";
@@ -62,14 +40,7 @@ int posChars() {
     return chars;
 }
 
-/**
-Generates code.
-
-@param length the length of code to be generated.
-@param chars the number of possible characters for each place.
-@return a code of desired specifications.
-*/
-string genCode(int length, int chars) {
+string Mastermind::genCode(int length, int chars) {
     const string CHARS = "0123456789abcdefghijklmnopqrstuvwxyz";
     string code = "";
     for (int i = 0; i < length; i++) {
@@ -78,15 +49,7 @@ string genCode(int length, int chars) {
     return code;
 }
 
-/**
-Reads and returns guess with error protection.
-
-@param rounds round number.
-@param length proper length of guess.
-@param chars proper number of characters in guess.
-@return player's guess.
-*/
-string readGuess(int rounds, int length, int chars, bool& cheatCode, bool& end) {
+string Mastermind::readGuess(int rounds, int length, int chars, bool& cheatCode, bool& end) {
     string guess;
     bool bad;
     const int ELEVEN = 11;
@@ -125,15 +88,7 @@ string readGuess(int rounds, int length, int chars, bool& cheatCode, bool& end) 
     return guess;
 }
 
-/**
-Evaluates guess, prints number of characters correct and misplaced, returns
-true if guess matches code.
-
-@param code code generated for game.
-@param guess player's guess as to code.
-@return 1 if guess matches code.
-*/
-bool guessEval(string code, string guess) {
+bool Mastermind::guessEval(string code, string guess) {
     int length = code.length();
     int correct = 0;
     for (int codeChar = 0; codeChar < length; codeChar++) {
@@ -158,12 +113,7 @@ bool guessEval(string code, string guess) {
     return (correct == length);
 }
 
-/**
-Plays a game of Mastermind and saves a Record to the records vector.
-
-@param records The object vector.
-*/
-void play(vector<Record>& records) {
+void Mastermind::play(vector<Record>& records) {
     int length = codeLength();
     int chars = posChars();
     string code = genCode(length, chars);
@@ -192,88 +142,4 @@ void play(vector<Record>& records) {
         Record temp(length, chars, rounds, name);
         records.push_back(temp);
     }
-    cout << endl;
-}
-
-
-int main() {
-    srand(time(0));
-    vector<Record> records;
-    loadRecords(records);
-
-    cout << "Welcome to Mastermind 2.0!\n\n";
-
-    int choice;
-
-    const int EXIT = 0;
-    const int INSTRUCT = 1;
-    const int PLAY = 2;
-    const int DISPLAY_ALL = 3;
-    const int DISPLAY_SELECT = 4;
-    do {
-        cout << "Please choose from the following menu:\n"
-        << "0. Exit\n"
-        << "1. Instructions\n"
-        << "2. Play\n"
-        << "3. Display all records\n"
-        << "4. Display selective records\n"
-        << "Choice (0-4):";
-        cin >> choice;
-        while (!cin || (choice > DISPLAY_SELECT)) {
-            cout << "Please enter a number between 0 and 4: ";
-            cin.clear();
-            cin.ignore(INT_MAX, '\n');
-            cin >> choice;
-        }
-        cout << endl;
-        switch (choice) {
-            case INSTRUCT: {
-                cout << "The game of mastermind is played between a code maker\n"
-                << "and a code breaker. In this program the code will be\n"
-                << "generated automatically and you will play the part of\n"
-                << "codebreaker. For each round you must enter a guess as\n"
-                << "to the code and will be returned the number of correct\n"
-                << "characters as well as the  number of characters included\n"
-                << "but misplaced. A single guessed character will not match\n"
-                << "multiple code characters nor will multiple guessed\n"
-                << "characters match a single code character. Try to guess\n"
-                << "the code in as few rounds as possible.\n\n"
-                << "Good luck!\n\n";
-                break;
-            }
-            case PLAY: {
-                play(records);
-                break;
-            }
-            case DISPLAY_ALL:{
-                display(records);
-                break;
-            }
-            case DISPLAY_SELECT: {
-                cout << "Please select code length to screen for:";
-                int length;
-                cin >> length;
-                cout << "Please select possible characters to screen for:";
-                int chars;
-                cin >> chars;
-                cout << endl;
-                display(length, chars, records);
-                break;
-            }
-        }
-    } while (choice != EXIT);
-
-    cout << "Would you like to save records from this session to a permanent"
-    << " file? (y/n): ";
-    char save;
-    cin >> save;
-    while (save != 'y' && save != 'n') {
-        cout << "Please enter either a \"y\" or an \"n\".\nWould you like to save"
-        << " the records from this session to\na permanent file? (y/n): ";
-        cin >> save;
-    }
-    if (save == 'y') saveRecords(records);
-
-    cout << "\nThank you for playing Mastermind!\n";
-    return 0;
 }
